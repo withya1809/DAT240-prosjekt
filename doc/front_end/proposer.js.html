@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: proposer.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: proposer.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * proposer.js
+ * file managing the event on the proposer.html
+ * @namespace proposer
+ */
+
+const client = new SocketConnector();//Web socket client
+
+/*
+ * Player game state labels for display.
+ * @global
+ * @memberOf proposer
+ */
+const msg = {
+    msgMyTurn: "It's your turn",
+    msgNotMyTurn: "wait for your turn",
+    msgPartyFinished: "congrats! You win!",
+    msgPartyDeco: "Deconnection! You can come back to the home page"
+};
+
+/*
+ * Enum for the player game state
+ * @global
+ * @memberOf proposer
+ */
+const enumState = {
+    myTurn: "PLAYING",
+    waiting: "WAITING",
+    finished: "FINISHED",
+    deconected: "DECONNECTION"
+};
+
+client.onConnect = function () {
+    console.log("----------------------------------------------")
+    route = `/app/party/${partyId}/respToGuesser`;
+    console.log(route);
+    client.send({sender: `${userId}`, content: `${label}`, type: 'JOIN'}, route);
+    console.log("pass")
+};
+
+/**
+ * User ID given by the back
+ * @global
+ * @type {string}
+ * @memberOf proposer
+ */
+var userId = "";
+
+/**
+ * Party ID given by the back
+ * @global
+ * @type {string}
+ * @memberOf proposer
+ */
+var partyId = "";
+
+/**
+ * Control variable for sending messages when it is the proposers turn
+ * @global
+ * @type {boolean}
+ * @memberOf proposer
+ */
+var myTurn = true;
+
+/**
+ * Player game state
+ * @global
+ * @type {string}
+ * @memberOf proposer
+ */
+var state = enumState.myTurn;
+
+/**
+ * Score display variable
+ * @global
+ * @type {string}
+ * @memberOf proposer
+ */
+var score = "0";
+
+updateState();//initialize the page state
+
+/**
+ * Send the image's id to the back-end using the web-socket channel
+ * @param id - image's id
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+function sendImageId(id) {
+    console.log("sendImageId used");
+    const message = {
+        content: {
+            segment: id,
+            role: PLAYER_ROLES.PROPOSER
+        },
+        type: MSG_TYPES.SEND_SEGMENT,
+        sender: userId
+    };
+    client.send(message, `/app/party/${partyId}/update`);
+}
+
+/**
+ * Subscribe to the websocket
+ * @param user_id - Id of the user
+ * @param party_id - Id of the party
+ * @author Guillien Grégoire
+ * @memberOf proposer
+ */
+function subscribe(user_id, party_id) {
+    userId = user_id;
+    partyId = party_id;
+    client.addStompListener(`/channel/update/${userId}`, update);
+    console.log("Subscribe to the websocket--------------------");
+}
+
+
+/**
+ * Callback method for the /channel/update/{userId} destination subscription
+ * @param msg - object or string
+ * @author Guillien Grégoire
+ * @memberOf proposer
+ */
+function update(msg) {
+    console.log("receive a message via the websocket");
+    state = msg.content.state;
+    score = msg.content.score;
+    time = Number(msg.content.time);
+    if (msg.content.segments != null) {
+        console.log("update segments");
+        segments = msg.content.segments;
+        updateSegments();
+    }
+    updateState();
+    updateFeatures();
+}
+
+/**
+ * Update the images segments picked if the page is reloaded
+ * @author Guillien Grégoire
+ * @memberOf proposer
+ */
+function updateSegments() {
+    segments.forEach(function (element) {
+        console.log(element);
+        console.log(document.getElementById(element));
+        document.getElementById(element).className = "beta-mask";
+        var lstBtn = document.getElementsByClassName("myButton");
+        for (let item of lstBtn) {
+            console.log(item.id);
+            if (item.value === element) {
+                console.log(item);
+                item.className = "";
+            }
+        }
+    });
+}
+
+/**
+ * Update the page based on the state received from the back.
+ * @author Guillien Grégoire
+ * @memberOf proposer
+ */
+function updateState() {
+
+    switch (state) {
+        case PLAYER_STATES.PLAYING:
+            stopTimer = true;
+            $("#proposerPopUp").text(msg.msgMyTurn);
+            break;
+
+        case PLAYER_STATES.WAITING:
+            stopTimer = false;
+            $("#proposerPopUp").text(msg.msgNotMyTurn);
+            break;
+
+        case PLAYER_STATES.FINISHED:
+            stopTimer = true;
+            $("#proposerPopUp").text(msg.msgPartyFinished);
+            client.disconnect();
+            break;
+
+        case enumState.deconected:
+            state = enumState.finished;
+            console.log("deconetcion!")
+            stopTimer = true;
+            $("#proposerPopUp").text(msg.msgPartyDeco);
+            client.disconnect();
+            break;
+
+        default:
+            break
+
+    }
+}
+
+/**
+ * Update score and timer on the page
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+function updateFeatures() {
+    $("#time").text(time);
+    $("#score").text(score);
+
+}
+
+/**
+ * Functions managing events on id html object
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+$(function () {
+    $("#disconnect").click(function () {
+        disconnect();
+    });
+    $("#endPlayRound").click(function () {
+        sendNotif();
+    });
+    $("#home").click(function () {
+        home();
+    });
+    $("#disconnect").click(function () {
+        disconnect();
+    });
+});
+
+/**
+ * Manage the 'mouseover' events
+ * @param String - trigger event
+ * @param target - html object
+ * @global
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+document.addEventListener("mouseover", ({target}) => {
+    if (target.className === "myButton") {
+        var element = document.getElementById(target.value).parentElement;
+        element.className = "beta-mask";
+    }
+})
+
+/**
+ * Manage the 'mouseout' events
+ * @param String - trigger event
+ * @param target - html object
+ * @global
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+document.addEventListener("mouseout", ({target}) => {
+    if (target.className === "myButton") {
+        var element = document.getElementById(target.value).parentElement;
+        element.className = "alpha-mask";
+    }
+});
+
+/**
+ * Manage the 'click' events
+ * @param String - trigger event
+ * @param target - html object
+ * @memberOf proposer
+ * @author Grégoire Guillien
+ */
+document.addEventListener("click", ({target}) => {
+    if (target.className === "myButton") {
+        if (state === enumState.myTurn) {
+            var element = document.getElementById(target.value).parentElement;
+            sendImageId(target.value);
+            target.disabled = true;
+            target.className = "";
+            myTurn = false;
+            state = enumState.waiting;
+            time = 0;
+            updateState();
+        } else if (state === enumState.finished) {
+            var element = document.getElementById(target.value).parentElement;
+            client.disconnect();
+            target.disabled = true;
+        } else {
+            state = enumState.waiting;
+            updateState();
+        }
+    }
+});
+
+/**
+ * Quit and go back to the welcome page
+ * @author Grégoire Guillien
+ * @memberOf proposer
+ */
+function home() {
+    const message = {
+        content: {
+            partyId: partyId,
+            role: PLAYER_ROLES.GUESSER,
+            sender: userId
+        },
+        type: "QUIT"
+    };
+    client.send(message, `/app/party/${partyId}/update`);
+    let url = "http://localhost:8080/welcomePage" + "?username=" + username + "&amp;id=" + userId;
+    window.location.replace(url);
+}
+
+/**
+ *send a surrend message to the back and return to the login page.
+ * @author Guillien Grégoire
+ * @memberOf proposer
+ */
+function disconnect() {
+    const message = {
+        content: {
+            partyId: partyId,
+            role: PLAYER_ROLES.GUESSER,
+            sender: userId
+        },
+        type: "QUIT"
+    };
+    client.send(message, `/app/party/${partyId}/update`);
+    let url = "http://localhost:8080/";
+    window.location.replace(url);
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="game.html">game</a></li><li><a href="guesser.html">guesser</a></li><li><a href="proposer.html">proposer</a></li><li><a href="timer.html">timer</a></li><li><a href="welcomePage.html">welcomePage</a></li></ul><h3>Global</h3><ul><li><a href="global.html#myTurn">myTurn</a></li><li><a href="global.html#partyId">partyId</a></li><li><a href="global.html#score">score</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#userId">userId</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.3</a> on Mon Nov 04 2019 22:20:48 GMT+0100 (GMT+01:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

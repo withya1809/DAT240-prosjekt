@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>WELCOME</title>
+	<link th:href="@{/css/main.css}" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+	<rel="stylesheet" 
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+		crossorigin="anonymous"
+	>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/welcomePage.js}"></script>
+	
+	<style>
+	
+	* {
+	  box-sizing: border-box;
+	}
+	
+	.column {
+	  float: left;
+	  width: 50%;
+	  padding: 10px;
+	  /* height: 300px; Should be removed. Only for demonstration */
+	}
+	
+	.picColumn{
+	width:100%;
+	height: 300px;
+	}
+	
+	.row::after {
+	  content: "";
+	  clear: both;
+	  display: table;
+	}
+
+	.loginWelcome {
+		color: black;
+		font-size: 20px;
+	}
+	
+	
+	[class*="col-"] {
+	  float: left;
+	  padding: 0px;
+	
+	}
+	
+	.loginSubtitle {
+		font-size: 20px
+	}
+
+
+	.header{
+	background-color:PaleTurquoise;
+	/* padding: 20px; */
+	padding-left: 50px;
+	
+	}
+	
+	.label_game{
+	color:black;
+	border:4px solid PaleTurquoise;
+	text-align:left;
+	}
+	
+	.container {
+	  padding: 16px;
+	}
+	
+	
+	.col-1 {width: 8.33%;}
+	.col-2 {width: 16.66%;}
+	.col-3 {width: 25%;}
+	.col-4 {width: 33.33%;}
+	.col-5 {width: 41.66%;}
+	.col-6 {width: 50%;}
+	.col-7 {width: 58.33%;}
+	.col-8 {width: 66.66%;}
+	.col-9 {width: 75%;}
+	.col-10 {width: 83.33%;}
+	.col-11 {width: 91.66%;}
+	.col-12 {width: 100%;}
+	
+	button {
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 14px 20px;
+	  margin: 8px 0;
+	  border: none;
+	  cursor: pointer;
+	  width: 100%;
+	}
+	
+	button:hover {
+	  opacity: 0.8;
+	}
+	</style>
+
+
+</head>
+<body>
+<div class="header">
+	<div class="row">
+	<h1>WELCOME TO "GUESS WHAT?"</h1>
+	</div>
+</div>
+
+
+  <div class="column" style="border:5px solid powderblue;">
+  	<div class="container"> 		  
+				<form action="/loginPage" method="POST">
+					<div class='bold-line'></div>
+					<div class='loginContainer'>
+						<div class='loginWindow'>
+							<div class='loginOverlay'></div>
+							<div class='loginContent'>
+								<div class='loginWelcome'>Hello There!</div>
+								<br>							
+								<div class='loginSubtitle'>Before playing, sign up or create an account.</div>
+								<div class='loginInput-fields'>
+									<input name="pseudo" type='text' placeholder='Username' class='createLoginInput-line loginFull-width'></input>
+									<input name="password" type='password' placeholder='Password' class='createloginInput-line loginFull-width'></input>
+								</div>
+						        <div>
+						        	<input class="loginGhost-round loginFull-width" value="Create User" type="submit">
+						        </div>
+							</div>
+						</div>
+					</div>			
+				</form>
+				  <form action="/loginPage" method="POST">
+					  <div class='bold-line'></div>
+					  <div class='loginContainer'>
+						  <div class='loginWindow'>
+							  <div class='loginOverlay'></div>
+							  <div class='loginContent'> <br>
+								  
+								  <div class='loginSubtitle'>Login</div>
+								  <div class='loginInput-fields'>
+									  <input name="pseudo" type='text' placeholder='Username' class='loginInput-line loginFull-width'></input>
+									  <input name="password" type='password' placeholder='Password' class='loginInput-line loginFull-width'></input>
+								  </div>
+								  <div>
+									  <input class="loginGhost-round loginFull-width" value="Sign In" type="submit">
+								  </div>
+							  </div>
+						  </div>
+					  </div>			
+				  </form>
+			  	
+
+
+			</div>
+  	</div>
+  </div>
+
+</div>
+
+</body>
+</html>

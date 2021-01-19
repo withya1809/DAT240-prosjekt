@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"no.uis.configs"},{"l":"no.uis.party"},{"l":"no.uis.players"},{"l":"no.uis.repositories"},{"l":"no.uis.tools"},{"l":"no.uis.websocket"}]

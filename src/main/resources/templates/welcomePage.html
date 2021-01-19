@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>WELCOME</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          crossorigin="anonymous">
+
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <!--     <script type="text/javascript" th:src="@{/js/socket-connector.js}"></script> -->
+    <script src="js/structures/socket-connector.js"></script>
+    <script th:inline="javascript">
+        let username = /*[[${username}]]*/ 'default';
+        let userId = /*[[${id}]]*/ 'default';
+    </script>
+    <script type="text/javascript" th:src="@{/js/welcomePage.js}"></script>
+
+
+    <style>
+
+      * {
+		box-sizing: border-box;
+      }
+      
+      .column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+
+        }
+
+
+      .row::after {
+        content: "";
+        clear: both;
+        display: table;
+        }
+      
+      .header{
+		background-color:PaleTurquoise;
+		text-align: center;
+		}
+		
+		
+	  .container {
+        padding: 16px;
+       }
+	
+       button {
+         background-color: #4CAF50;
+         color: white;
+         padding: 14px 20px;
+         margin: 8px 0;
+         border: none;
+         cursor: pointer;
+         width: 100%;
+       }
+
+       button:hover {
+         opacity: 0.8;
+       }
+
+       th{
+		  background-color: PaleTurquoise;
+		  border: 1px solid PaleTurquoise;
+		  text-align: left;
+		  padding: 10px;
+		}
+
+		td{
+		  background-color: #F1FCFC;
+		  border: 1px solid PaleTurquoise;
+		  text-align: left;
+		  padding: 10px;
+		}
+
+		table {
+		  width: 100%;
+		  border: 1px solid PaleTurquoise;
+		  text-align: left;
+		}
+
+      	body {
+      	  background-color: #f0f9f8;
+		}
+
+
+    </style>
+
+
+</head>
+<body>
+
+<div class="header"><br><h1>WELCOME TO "GUESS WHAT?"</h1><br></div>
+
+
+<div class="row">
+    <div class="column" style="border:5px solid powderblue;">
+		<h2>Your name: <span th:text="${username}"></span></h2>
+        <div>
+			<div>
+			
+            <form action="welcomePage" method="POST">
+				<select id="dropOperator" name="selectedPlayModelabel" class="browser-default custom-select custom-select-lg mb-3">
+                  	<option th:each="label : ${listPlayMode}" th:value="${label}" th:text="${label}"></option>
+               	</select>
+            </form>
+
+            <button type="button" id="search">SEARCH FOR A GAME</button>
+            <p style="visibility: hidden" id="searching-text">Searching...</p>
+            <div class="d-flex justify-content-center" id="loader" style="visibility:hidden;">
+                <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div>
+            </div>
+            
+          </div>
+      </div>
+  </div>
+
+  <div class="column" style="border:5px solid powderblue;">
+      <div class="container">
+		<h2>Top 5 players </h2>
+
+		<table>
+          <tr>
+            <th>Proposer</th>
+            <th>Guesser</th>
+            <th>Image name</th>
+            <th>High score</th>
+          </tr>
+          <tr th:each="score : ${scoreBoard}">
+            <td th:text="${score.proposerName}"></td>
+            <td th:text="${score.guesserName}"></td>
+            <td th:text="${score.imagename}"></td>
+            <td th:text="${score.score}"></td>
+          </tr>
+        </table>
+        
+      </div>
+  </div>
+
+</div>
+
+<form action="guesser" method="post" style="visibility: hidden" id="guesserForm">
+    <input type="hidden" id="partyIdInput">
+    <input type="hidden" id="selectedLabelInput">
+</form>
+
+<!--
+  <span th:text="${obj.name}"> </span>
+  <span th:text="${obj.id}"> </span>
+
+  <form action="addPlayer">
+  <input type="text" name="id"><br>
+  <input type="text" name="name"><br>
+  <input type="submit">
+  </form>
+ -->
+<script th:inline="javascript">
+    let alreadySearching = /*[[${playerIsSearching}]]*/ 'default';
+    if (alreadySearching) {
+        console.log("YOU'RE ALREADY SEARCHING!");
+        researchParty();
+        searching = true;
+    }
+</script>
+</body>
+</html>

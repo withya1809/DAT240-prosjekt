@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Guesser Page</title>
+<link th:href="@{/css/main.css}" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+	<script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/game.js}"></script>
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+
+.row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+
+[class*="col-"] {
+  float: left;
+  padding: 15px;
+  
+}
+
+.header{
+background-color:PaleTurquoise;
+}
+
+.label_game{
+color:black;
+border:4px solid PaleTurquoise;
+text-align:left;
+}
+
+
+
+.col-1 {width: 8.33%;}
+.col-2 {width: 16.66%;}
+.col-3 {width: 25%;}
+.col-4 {width: 33.33%;}
+.col-5 {width: 41.66%;}
+.col-6 {width: 50%;}
+.col-7 {width: 58.33%;}
+.col-8 {width: 66.66%;}
+.col-9 {width: 75%;}
+.col-10 {width: 83.33%;}
+.col-11 {width: 91.66%;}
+.col-12 {width: 100%;}
+
+</style>
+
+
+
+
+
+</head>
+<body>
+
+<div class="header">
+	<div class="row">
+    	<div class="col-9">
+    	</div>
+
+    	<!-- CHANGE THE LINKS BELOW -->
+   	 	<div class="col-1">
+    	<a href="http://localhost:8080/welcomePage">Home</a>
+   	 	</div>
+
+   		<div class="col-2">
+    	<a href="https://www.w3schools.com">Disconnect </a>
+     	</div>
+
+	</div>
+</div>
+
+<!-- CHANGE GAME NAME -->
+<div class="row">
+	<div class="col-4">
+    	<div class="label_game">
+    	<h1>GUESS WHAT?</h1>
+    	</div>
+	</div>
+
+</div>
+
+
+
+<div class="row">
+		<div class="col-7">
+          <h>INFO: </h>
+          
+        	<div class="label_game">
+					<h2 th:text = "${infotext}"> Wait for segment</h2>
+					<h2 th:text = "${guessesleft}"></h2>
+    		</div>
+		 </div>
+		 
+
+    <div class="col-3">
+          <h> BEST PLAYER ON THIS IMAGE: </h>
+        	<div class="label_game">
+        	<h2> NAME </h2>
+    		  </div>
+   	</div>
+
+    <div class="col-2">
+          <h> SCORE: </h>
+        	<div class="label_game">
+        	<h2>SCORE</h2>
+    		  </div>
+   	</div>
+
+</div>
+
+
+<div class="container">
+
+<div class="row">
+		<div class="col-8">
+			<div style="position: relative;">
+				<div th:each="image,iter : ${listimagesproposed}" class="alpha-mask">
+					<img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+				</div>			
+			</div>
+		</div>
+		
+		
+		<div class="col-4">	 	
+			 <form action="guesser" method="POST">
+			<input type="text" name="SubmittedGuess" placeholder="Your guess:"><br>
+			<input type="submit" value="SUBMIT">
+			<input type="button"  value="NEW SEGMENT"><br>
+			</form>
+		</div>
+		
+</div>
+
+<div class="row">
+	<div class="col-8">
+	</div>
+
+
+
+    <div class="col-2">
+          <h> TIME: </h>
+        	<div class="label_game">
+        	<h2> 00:00:00 </h2>
+    		  </div>
+   	</div>
+
+    <div class="col-2">
+          <h> YOUR SCORE: </h>
+        	<div class="label_game">
+        	<h2> SCORE </h2>
+    		</div>
+   	</div>
+</div>
+
+
+<!--  
+
+<div class="container">
+	<div class="row">
+		Bande Titre & btn home & Disconect button & player info
+	</div>
+	
+	<div class="row">
+		<div class="col-sm">
+			Guesser number
+		</div>
+	
+		<div class="col-sm">
+			Best player label + score
+		</div>
+	</div>
+
+	<div class="row buttons-images-container">
+		<div class="col-md">
+			<div style="position: relative;">
+				<div th:each="image,iter : ${listimagesproposed}" class="alpha-mask">
+					<img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+				</div>			
+			</div>
+		</div>
+		
+		<div class="col-sm blackSideLine">
+			<div class="row">
+			 	<form action="guesser" method="POST">
+					<div class="col-sm">
+					<div class= "Container">
+						<div style="position: relative;">
+							<div class="Input">
+		    					<input type="text" id="input" name ="submettedGuess" class="Input-text" placeholder="Your guess of the image label, e.g. cinema">
+		    					<label for="input" class="Input-label">First name</label>
+		  					</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm">
+				 		<input class="bouton16" value="SUBMIT" type="submit">
+					</div>
+			 	</form>						
+			</div>
+			
+			<div class="row">
+				time & current score
+			</div>
+		</div>
+	</div>
+</div>
+
+-->
+</body>
+</html>

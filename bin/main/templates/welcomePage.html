@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>WELCOME</title>
+	<link th:href="@{/css/main.css}" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+	<rel="stylesheet" 
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+		crossorigin="anonymous"
+	>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/welcomePage.js}"></script>
+	
+	<style>
+	
+	* {
+	  box-sizing: border-box;
+	}
+	
+	.column {
+	  float: left;
+	  width: 50%;
+	  padding: 10px;
+	  height: 300px; /* Should be removed. Only for demonstration */
+	}
+	
+	.picColumn{
+	width:100%;
+	height: 300px;
+	}
+	
+	.row::after {
+	  content: "";
+	  clear: both;
+	  display: table;
+	}
+	
+	
+	[class*="col-"] {
+	  float: left;
+	  padding: 15px;
+	
+	}
+	
+	.header{
+	background-color:PaleTurquoise;
+	}
+	
+	.label_game{
+	color:black;
+	border:4px solid PaleTurquoise;
+	text-align:left;
+	}
+	
+	.container {
+	  padding: 16px;
+	}
+	
+	
+	.col-1 {width: 8.33%;}
+	.col-2 {width: 16.66%;}
+	.col-3 {width: 25%;}
+	.col-4 {width: 33.33%;}
+	.col-5 {width: 41.66%;}
+	.col-6 {width: 50%;}
+	.col-7 {width: 58.33%;}
+	.col-8 {width: 66.66%;}
+	.col-9 {width: 75%;}
+	.col-10 {width: 83.33%;}
+	.col-11 {width: 91.66%;}
+	.col-12 {width: 100%;}
+	
+	button {
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 14px 20px;
+	  margin: 8px 0;
+	  border: none;
+	  cursor: pointer;
+	  width: 100%;
+	}
+	
+	button:hover {
+	  opacity: 0.8;
+	}
+	</style>
+
+
+</head>
+<body>
+<div class="header">
+	<div class="row">
+	<h1>WELCOME TO "GUESS WHAT?"</h1>
+	</div>
+</div>
+
+<div class="row">
+	<div class="column" style="border:5px solid powderblue;">
+		<div th:switch="${user.isLogged}">
+				<div th:case="true">
+					<form action="welcomePage" method="POST">
+					    <select  id="dropOperator" name="selectedPlayModelabel">
+						    <option value="0">Select a label </option>
+						    <option th:each="label : ${listPlayMode}" th:value="${label}" th:text="${label}"></option>
+					    </select>
+					    <select  id="dropOperator2" name="selectedPlayerModelabel">
+						    <option value="0">Select a label </option>
+						    <option th:each="label : ${listPlayerMode}" th:value="${label}" th:text="${label}"></option>
+					    </select>
+					    <input type="submit">
+					</form>
+					<button id="connect" class="btn btn-default" type="submit">Websocket Connection</button>
+					<button id="search" class="btn btn-default" type="submit">Research a party</button>
+					<form id="navigateur" action="welcomePage" method="GET">
+						<button id="Begin party" class="btn btn-default" type="submit">Go to the party</button>
+					</form>
+					
+				</div>
+			</div>
+<!-- 	<select> -->
+<!--   	<option value="0">MODE</option> -->
+<!--   	<option value="Singleplayer">Singleplayer</option> -->
+<!--   	<option value="Multiplayer">Multiplayer</option> -->
+
+<!-- 	</select> -->
+
+<br>
+<br>
+
+	<select>
+	<option value="0">ROLE</option>
+	<option value="Guesser">Guesser</option>
+	<option value="Proposer">Proposer</option>
+	</select>
+
+<br>
+<br>
+
+<!-- CHANGE ONCLICK, MAKE JAVASCRIPT -->
+	<button type="button" onclick="document.getElementById('demo').innerHTML = Date()"> RESEARCH PARTY </button>
+ </div>
+
+  <div class="column" style="border:5px solid powderblue;">
+  	<div class="container">
+    	<div th:switch="${user.isLogged}"> 
+			  <div th:case="false">
+				<form action="/welcomePage" method="POST">
+					<div class='bold-line'></div>
+					<div class='loginContainer'>
+						<div class='loginWindow'>
+							<div class='loginOverlay'></div>
+							<div class='loginContent'>
+								<div class='loginWelcome'>Hello There!</div>
+								<div class='loginSubtitle'>Before playing, sign up or create an account ;).</div>
+								<div class='loginInput-fields'>
+									<input name="pseudo" type='text' placeholder='Username' class='loginInput-line loginFull-width'></input>
+									<input name="password" type='password' placeholder='Password' class='loginInput-line loginFull-width'></input>
+								</div>
+						        <div>
+						        	<input class="loginGhost-round loginFull-width" value="create Account" type="submit">
+						        </div>
+							</div>
+						</div>
+					</div>			
+				</form>
+			</div>
+			<div th:switch="${user.isLogged}">
+				<div th:case="true">
+					<div class='bold-line'></div>
+					<div class='loginContainer'>
+						<div class='loginWindow'>
+							<div class='loginOverlay'></div>
+							<div class='loginContent'>
+<!-- 							<div class='loginWelcome' th:text="${user.name}"> </div> -->
+<!-- 							<p th:text="${user.name}"></p> -->
+								<span class='loginWelcome'>
+								Pseudo : <span th:text="${user.name}"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			  <p th:case="#{roles.manager}">User is a manager</p>
+			  <p th:case="*">User is some other thing</p> 
+			
+			</div>
+  	</div>
+  </div>
+
+</div>
+
+	<!--
+	  <span th:text="${obj.name}"> </span>
+	  <span th:text="${obj.id}"> </span>
+
+	  <form action="addPlayer">
+	  <input type="text" name="id"><br>
+	  <input type="text" name="name"><br>
+	  <input type="submit">
+	  </form>
+	 -->
+
+</body>
+</html>

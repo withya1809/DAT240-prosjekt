@@ -1,0 +1,322 @@
+<!DOCTYPE html> 
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>proposer page</title>
+<link th:href="@{/css/main.css}" rel="stylesheet">
+<link 
+	rel="stylesheet" 
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" 
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" 
+	crossorigin="anonymous"
+>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/game.js}"></script>
+
+	<style>
+	
+		* {
+		  box-sizing: border-box;
+		}
+		
+		
+		.row::after {
+		  content: "";
+		  clear: both;
+		  display: table;
+		}
+		
+		
+		[class*="col-"] {
+		  float: left;
+		  padding: 15px;
+		}
+		
+		.header{
+		background-color:PaleTurquoise;
+		}
+		
+		.label_game{
+		color:black;
+		border:4px solid PaleTurquoise;
+		text-align:left
+		}
+		
+		.border_around{
+		border:4px solid PaleTurquoise;
+		}
+		
+		
+		
+		.col-1 {width: 8.33%;}
+		.col-2 {width: 16.66%;}
+		.col-3 {width: 25%;}
+		.col-4 {width: 33.33%;}
+		.col-5 {width: 41.66%;}
+		.col-6 {width: 50%;}
+		.col-7 {width: 58.33%;}
+		.col-8 {width: 66.66%;}
+		.col-9 {width: 75%;}
+		.col-10 {width: 83.33%;}
+		.col-11 {width: 91.66%;}
+		.col-12 {width: 100%;}
+	
+	</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="header">
+	<div class="row">
+    	<div class="col-9">
+    	</div>
+
+    	<!-- CHANGE THE LINKS BELOW -->
+   	 	<div class="col-1">
+    	<a href="http://localhost:8080/welcomePage">Home</a>
+   	 	</div>
+
+   		<div class="col-2">
+    	<a href="https://www.w3schools.com">Disconnect </a>
+     	</div>
+
+	</div>
+</div>
+
+<!-- CHANGE GAME NAME -->
+<div class="row">
+	<div class="col-4">
+    	<div class="label_game">
+    	<h1>GUESS WHAT?</h1>
+    	</div>
+	</div>
+
+</div>
+
+
+<div class="row">
+		<div class="col-sm">
+			<form action="proposer" method="GET">
+			    <select  id="dropOperator" name="selectedlabel">
+			    <option value="0">Select an image </option>
+			    <option th:each="label : ${listlabels}" th:value="${label}" th:text="${label}"></option>
+			    </select>
+			    <input type="submit">
+			</form>
+		</div>
+</div>
+
+<div class="row">
+		<div class="col-7">
+          <h>IMAGE NAME: </h>
+          
+        	<div class="label_game">
+        	<h2 th:text = "${selectedlabel}"></h2>
+    		</div>
+   	</div>
+
+
+    <div class="col-3">
+          <h> BEST PLAYER ON THIS IMAGE: </h>
+        	<div class="label_game">
+        	<h2> NAME </h2>
+    		  </div>
+   	</div>
+
+    <div class="col-2">
+          <h> SCORE: </h>
+        	<div class="label_game">
+        	<h2 th:text="${highestscore}">
+    		  </div>
+   	</div>
+
+</div>
+
+<div  class="container"> 
+
+	
+	<div class="row">
+		<div class="col-8">
+			<div style="position: relative;">
+				<div th:each="image,iter : ${listimages}" class="alpha-mask">
+					<img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+				</div>			
+			</div>
+		</div>
+		
+	
+		<div class="col-4">
+			<div class="row">
+				
+				<!-- temp0.style = "display: block; background-color: pink; opacity: 0.5" -->
+				
+				<div th:each="image,iter : ${listimages}" class="alpha-mask">
+				 		<form action="/proposer" method="POST">
+				 			<input name="id" th:value="${iter.index}" type="hidden" />
+				 			<input name="selectedlabel" th:value="${selectedlabel}" type="hidden" />	 		
+					 		<input class="myButton" th:value="${iter.index}" type="submit">
+				 			
+				 		</form>		
+				 			 		
+					<br>
+				</div>
+			</div>
+		</div>
+			
+		
+   	</div>
+		
+	
+</div>
+
+
+<div class="row">
+	<div class="col-7">
+		<button id="endPlayRound" class="btn btn-default" type="submit">End its play round</button>
+	</div>
+
+
+
+    <div class="col-3">
+          <h> TIME: </h>
+        	<div class="label_game">
+        	<h2> 00:00:00 </h2>
+    		  </div>
+   	</div>
+
+    <div class="col-2">
+          <h> YOUR SCORE: </h>
+        	<div class="label_game">
+        	<h2> SCORE </h2>
+    		</div>
+   	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!--  
+
+<div  class="container">
+
+	<div class="row">
+		Title
+	</div>
+	
+	<div class="row">
+		<div class="col-sm">
+			<form action="proposer" method="GET">
+			    <select  id="dropOperator" name="selectedlabel">
+			    <option value="0">Select a label </option>
+			    <option th:each="label : ${listlabels}" th:value="${label}" th:text="${label}"></option>
+			    </select>
+			    <input type="submit">
+			</form>
+		</div>
+			
+		<div class="col-sm">
+			Best player on this image
+			<p th:text="${highestscore}">
+			</p>
+		</div>
+	</div>
+	
+	<div class="row buttons-images-container">
+		<div class="col-sm">
+			<div style="position: relative;">
+				<div th:each="image,iter : ${listimages}" class="alpha-mask">
+					<img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+				</div>			
+			</div>
+		</div>
+		<div class="col-sm">
+			<div class="row">
+				<!-- temp0.style = "display: block; background-color: pink; opacity: 0.5" -->
+				
+				
+				<!--  
+				
+				<div th:each="image,iter : ${listimages}" class="alpha-mask">
+				 		<form action="/proposer" method="POST">
+				 			<input name="id" th:value="${iter.index}" type="hidden" />
+				 			<input name="selectedlabel" th:value="${selectedlabel}" type="hidden" />
+					 		<input class="myButton" th:value="${iter.index}" type="submit">
+				 		</form>			 		
+					<br>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+-->
+
+
+<!-- 	A voir / vérifier si spring gère pas lui même les event -->
+	<script type="text/javascript">
+		document.addEventListener("mouseover", ({ target }) => {
+			console.log(target)
+			if (target.className === "myButton") {	
+				console.log(target)
+				var element = document.getElementById(target.value).parentElement
+// 				var element = document.getElementById(target.children[0].innerText).parentElement
+				element.className = "beta-mask"
+			}
+		})
+		document.addEventListener("mouseout", ({ target }) => {
+			if (target.className === "myButton") {
+// 				var element = document.getElementById(target.children[0].innerText).parentElement
+				var element = document.getElementById(target.value).parentElement
+				element.className = "alpha-mask"			
+			}
+		})
+		setTimeout(() => {
+			fetch(`http://localhost:8080/showImage?selectedlabel=${window.location.search}`).then(response => console.log(response))
+		}, 10000)
+// 		document.addEventListener("click", event => {
+// 			if (event.target.className === "myButton") {
+// 				var form = new FormData();
+// 				form.append('id', event.target.children[0].innerText)
+// 				fetch(`/game`, {
+// 				  method: "POST",
+// 				  body: form
+// 				}).then(response => console.log(response))
+// 			}
+// 		})
+	</script>
+
+	
+
+<!--  <div th:each="image,iter : ${listimages}" class="alpha-mask"> -->
+<!--   <span id="myvar" th:text="${iter.index}"></span> -->
+<!--   <div class="button"> -->
+<!--   	<p> -->
+<!--    		<a href="#"> -->
+<!--    		<span id="myvar" th:text="${iter.index}"></span> -->
+<!--    		</a> -->
+<!--  	</p> -->
+  	
+<!--   </div> -->
+<!-- </div> -->
+ 
+ 
+ 
+ 
+</body>

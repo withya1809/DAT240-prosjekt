@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>proposer page</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <link
+		rel="stylesheet"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    >
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="js/structures/enum.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/structures/socket-connector.js"></script>
+    <script th:inline="javascript">
+        let label = /*[[${selectedlabel}]]*/ 'default';
+    </script>
+    <script type="text/javascript" th:src="@{/js/proposer.js}"></script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .row::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        [class*="col-"] {
+            float: left;
+            padding: 15px;
+        }
+
+        .header {
+            background-color: PaleTurquoise;
+        }
+
+        .label_game {
+            color: black;
+            border: 4px solid PaleTurquoise;
+            text-align: left
+        }
+
+        .border_around {
+            border: 4px solid PaleTurquoise;
+        }
+
+        .col-1 {
+            width: 8.33%;
+        }
+
+        .col-2 {
+            width: 16.66%;
+        }
+
+        .col-3 {
+            width: 25%;
+        }
+
+        .col-4 {
+            width: 33.33%;
+        }
+
+        .col-5 {
+            width: 41.66%;
+        }
+
+        .col-6 {
+            width: 50%;
+        }
+
+        .col-7 {
+            width: 58.33%;
+        }
+
+        .col-8 {
+            width: 66.66%;
+        }
+
+        .col-9 {
+            width: 75%;
+        }
+
+        .col-10 {
+            width: 83.33%;
+        }
+
+        .col-11 {
+            width: 91.66%;
+        }
+
+        .col-12 {
+            width: 100%;
+        }
+
+        body {
+            background-color: #f0f9f8;
+        }
+
+    </style>
+</head>
+<body>
+	<div class="header">
+		<div class="row">
+			<div class="col-9">
+			</div>
+			<div class="col-1">
+            	<input type="button" id="home" value="Home">
+        	</div>
+        	<div class="col-2">
+            	<input type="button" id="disconnect" value="Disconnect">
+        	</div>
+	    </div>
+	</div>
+	<div class="row">
+	    <div class="col-4">
+	        <div class="container">
+	            <div class="label_game">
+	                <h1>GUESS WHAT?</h1>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="row">
+	    <div class="col-7">
+	        <h>IMAGE NAME:</h>
+	        <div class="label_game">
+	            <h2 th:text="${selectedlabel}"></h2>
+	            <h2 th:text="${proposerinfo}"></h2>
+	        </div>
+	    </div>
+	</div>
+	<div class="container">
+	    <div class="row">
+	        <div class="col-8">
+	            <div>
+	                <h3 id="proposerPopUp">your turn</h3>
+	            </div>
+	            <div style="position: relative;">
+	                <div th:each="image,iter : ${listimages}" class="alpha-mask">
+	                    <img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="col-4">
+	            <div class="row">
+	                <div th:each="image,iter : ${listimages}" class="alpha-mask">
+	                    <div>
+	                        <input name="id" th:value="${iter.index}" type="hidden"/>
+	                        <input name="selectedlabel" th:value="${selectedlabel}" type="hidden"/>
+	                        <input class="myButton" th:value="${iter.index}" type="submit">
+	                    </div>
+	                    <br>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div class="row">
+	    <div class="col-7">
+	        <button id="endPlayRound" class="btn btn-default" type="submit"></button>
+	    </div>
+	    <div class="col-3">
+	        <h> TIME:</h>
+	        <div class="label_game">
+	            <h2 id="timer"></h2>
+	        </div>
+	    </div>
+	    <div class="col-2">
+	        <h> YOUR SCORE:</h>
+	        <div class="label_game">
+	            <h2 id="score"> 1000 </h2>
+	        </div>
+	    </div>
+	</div>
+	<script th:inline="javascript">
+	    /*<![CDATA[*/
+	    //Thimeleaf attribute
+	    var userId = /*[[${userId}]]*/ 'default';
+	
+	    var partyId = /*[[${partyId}]]*/ 'default';
+	
+	    subscribe(userId, partyId);
+	
+	    var username = /*[[${username}]]*/ 'default';
+	
+	    /*]]>*/
+	</script>
+	<script src="js/timer.js"></script>
+</body>

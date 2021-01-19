@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>proposer page</title>
+<link th:href="@{/css/main.css}" rel="stylesheet">
+<link
+	rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+	<style>
+
+		* {
+		  box-sizing: border-box;
+		}
+
+
+		.row::after {
+		  content: "";
+		  clear: both;
+		  display: table;
+		}
+
+
+		[class*="col-"] {
+		  float: left;
+		  padding: 15px;
+		}
+
+		.header{
+		background-color:PaleTurquoise;
+		}
+
+		.label_game{
+		color:black;
+		border:4px solid PaleTurquoise;
+		text-align:center
+		}
+
+		.border_around{
+		border:4px solid PaleTurquoise;
+		}
+
+		.col-1 {width: 8.33%;}
+		.col-2 {width: 16.66%;}
+		.col-3 {width: 25%;}
+		.col-4 {width: 33.33%;}
+		.col-5 {width: 41.66%;}
+		.col-6 {width: 50%;}
+		.col-7 {width: 58.33%;}
+		.col-8 {width: 66.66%;}
+		.col-9 {width: 75%;}
+		.col-10 {width: 83.33%;}
+		.col-11 {width: 91.66%;}
+		.col-12 {width: 100%;}
+
+		body {
+	  		background-color: #f0f9f8;
+		}
+
+    h1{
+    	text-align: center;
+    }
+
+	</style>
+</head>
+
+<body>
+	<div class="header">
+		<div class="row">
+	    	<div class="col-9"></div>
+	   	 	<div class="col-1">
+	   	 	</div>
+	   		<div class="col-2">
+	     	</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+	    	<div class="label_game">
+	    		<h1>GUESS WHAT?</h1>
+	    	</div>
+		</div>
+	</div>
+	<div class= "row">
+	  <div class="col-12">
+	    <h1 style = "color: green;"> SELECT AN IMAGE LABEL TO START THE GAME</h1>
+	  </div>
+	</div>
+	<div class="row">
+	<div class="col-5"></div>
+		<div class="col-5">
+			<form action="proposer" method="GET">
+				<select  id="dropOperator" name="selectedlabel">
+					<option th:each="label : ${listlabels}" th:value="${label}" th:text="${label}"></option>
+				</select>
+				<input type="hidden" name="partyId" th:value="${partyId}">
+			    <input type="hidden" name="username" th:value="${username}">
+			    <input type="submit">
+			</form>
+		</div>
+	</div>
+	<div  class="container">
+		<div class="row">
+			<div class="col-8">
+				<div style="position: relative;">
+					<div th:each="image,iter : ${listimages}" class="alpha-mask">
+						<img th:id="${iter.index}" th:attr="src=@{|${image}|}" onerror="this.style.display='none'"/>
+					</div>
+				</div>
+			</div>
+	   	</div>
+	</div>
+	<script type="text/javascript">
+		document.addEventListener("mouseover", ({ target }) => {
+			if (target.className === "myButton") {
+				var element = document.getElementById(target.value).parentElement
+				element.className = "beta-mask"
+			}
+		})
+		document.addEventListener("mouseout", ({ target }) => {
+			if (target.className === "myButton") {
+				var element = document.getElementById(target.value).parentElement
+				element.className = "alpha-mask"
+			}
+		})
+		setTimeout(() => {
+			fetch(`http://localhost:8080/showImage?selectedlabel=${window.location.search}`).then(response => console.log(response))
+		}, 10000)
+	</script>
+	<script th:inline="javascript">
+        /*<![CDATA[*/
+        //Thimeleaf attribute
+        var userId = /*[[${userId}]]*/ 'default';
+
+        var username = /*[[${username}]]*/ 'default';
+
+
+        /*]]>*/
+        
+        $(function () {
+		    $("#home").click(function () {
+		        home();
+		    });
+		    $("#disconnect").click(function () {
+		    	disconnect();
+		    });
+		});
+        
+        /**
+         *send a surrend message to the back and return to the home page.
+         * @author Guillien Grégoire
+         */
+        function home(){
+        	let url = "http://localhost:8080/welcomePage" + "?username=" + username + "&id=" + userId;
+        	window.location.replace(url);
+        }
+
+        /**
+         *send a surrend message to the back and return to the login page.
+         * @author Guillien Grégoire
+         */
+        function disconnect(){
+        	let url = "http://localhost:8080/";
+        	window.location.replace(url);
+        }
+    </script> 
+</body>

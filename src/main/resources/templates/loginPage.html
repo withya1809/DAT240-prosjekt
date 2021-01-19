@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>WELCOME</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+	<rel="stylesheet"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+		crossorigin="anonymous"
+	>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+  <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+  <script type="text/javascript" th:src="@{/js/welcomePage.js}"></script>
+
+	<style>
+
+	.row::after {
+	  content: " ";
+	  clear: both;
+	  display: table;
+	}
+
+	.loginWelcome {
+		color: black;
+		font-size: 20px;
+		background-color: powderblue;
+	}
+
+	.loginSubtitle {
+		font-size: 20px
+	}
+
+
+	.header{
+	background-color:PaleTurquoise;
+	text-align: center;
+
+	}
+
+	.container {
+	  padding: 16px;
+	}
+
+	[class*="col-"] {
+		float: left;
+		padding: 0px;
+
+	}
+
+	.col-1 {width: 8.33%;}
+	.col-2 {width: 16.66%;}
+	.col-3 {width: 25%;}
+	.col-4 {width: 33.33%;}
+	.col-5 {width: 41.66%;}
+	.col-6 {width: 50%;}
+	.col-7 {width: 58.33%;}
+	.col-8 {width: 66.66%;}
+	.col-9 {width: 75%;}
+	.col-10 {width: 83.33%;}
+	.col-11 {width: 91.66%;}
+	.col-12 {width: 100%;}
+
+	body {
+  	background-color: #f0f9f8;
+	}
+
+	</style>
+
+
+</head>
+<body>
+
+<div class="header"><br><h1>WELCOME TO "GUESS WHAT?"</h1><br></div>
+
+<div class= "col-12"><br> <br> <br> <br> <br></div>
+<div class= "col-3"><br></div>
+
+<div class="col-6" style="border:5px solid powderblue;">
+	<div class="container">
+
+		<form action="/reg-post" method="POST">
+			<p th:text="${invalid_message}" style="color:red;"></p>
+			<div class='bold-line'></div>
+
+			<div class='loginWindow'>
+				<div class='loginOverlay'>
+					<div class='loginContent'>
+						<div class='loginWelcome'> PLEASE LOGIN OR SIGN UP TO ENTER THE GAME ! </div>
+
+						<div class='loginSubtitle'>Sign Up!</div>
+
+						<form>
+							<input name="reg_username" type='text' placeholder='Username' class='createLoginInput-line loginFull-width'></input>
+							<input name="reg_password" type='password' placeholder='Password' class='createloginInput-line loginFull-width'></input>
+							<input name="reg_confirmpass" type='password' placeholder='Confirm Password' class='loginInput-line loginFull-width'></input>
+							<br>
+							<input class="loginGhost-round loginFull-width" value="Create User" type="submit">
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</form>
+
+
+	  <form action="/login-post" method="POST">
+		  <div class='bold-line'></div>
+			<div class='loginWindow'>
+				<div class='loginOverlay'></div>
+
+			<div class='loginContent'> <br>
+				<div class='loginSubtitle'>Login</div>
+					<form>
+					  <input name="login_username" type='text' placeholder='Username' class='loginInput-line loginFull-width'></input>
+					  <input name="login_password" type='password' placeholder='Password' class='loginInput-line loginFull-width'></input>
+					  <br>
+					  <input class="loginGhost-round loginFull-width" value="Sign In" type="submit">
+					</form>
+			</div>
+			</div>
+	  </form>
+
+	</div>
+</div>
+
+
+</body>
+</html>
+
